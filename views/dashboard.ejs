@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UtilityAPI - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-900 to-black text-white min-h-screen"
+  >
+    <!-- Navigation -->
+    <nav class="border-b border-gray-800">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-8">
+            <div
+              class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+            >
+              UtilityAPI
+            </div>
+            <div class="hidden md:flex space-x-6">
+              <a href="#" class="text-blue-400">Dashboard</a>
+              <a href="#" class="text-gray-400 hover:text-white transition"
+                >Documentation</a
+              >
+              <a href="#" class="text-gray-400 hover:text-white transition"
+                >Support</a
+              >
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-gray-400"><%= user.name %></span>
+            <span class="text-gray-400"><%= user.email %></span>
+            <button class="text-gray-400 hover:text-white transition">
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+      <!-- Usage Overview -->
+     <!-- Usage Overview -->
+<div class="container mx-auto px-6 py-8">
+    <div class="relative">
+      <!-- Coming Soon Overlay -->
+      <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm rounded-xl z-10 flex items-center justify-center">
+        <span class="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full text-sm font-semibold">
+          Coming Soon
+        </span>
+      </div>
+  
+      <!-- Existing Content (Blurred) -->
+      <div class="grid md:grid-cols-4 gap-6 mb-8 opacity-30">
+        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fas fa-play-circle text-blue-400 text-2xl"></i>
+            <h3 class="text-lg font-semibold">Videos Processed</h3>
+          </div>
+          <p class="text-3xl font-bold">1,234</p>
+          <p class="text-sm text-gray-400">+12% from last month</p>
+        </div>
+        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fas fa-clock text-purple-400 text-2xl"></i>
+            <h3 class="text-lg font-semibold">Processing Time</h3>
+          </div>
+          <p class="text-3xl font-bold">856h</p>
+          <p class="text-sm text-gray-400">Total processing time</p>
+        </div>
+        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fas fa-hdd text-blue-400 text-2xl"></i>
+            <h3 class="text-lg font-semibold">Storage Used</h3>
+          </div>
+          <p class="text-3xl font-bold">234GB</p>
+          <p class="text-sm text-gray-400">of 500GB quota</p>
+        </div>
+        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fas fa-dollar-sign text-purple-400 text-2xl"></i>
+            <h3 class="text-lg font-semibold">Current Plan</h3>
+          </div>
+          <p class="text-3xl font-bold">Pro</p>
+          <p class="text-sm text-gray-400">$49/month</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <!-- API Keys Section -->
+      <div class="bg-gray-800/50 rounded-xl border border-gray-700 mb-8">
+        <div class="p-6 border-b border-gray-700">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold">API Keys</h2>
+            <button
+              class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 px-4 py-2 rounded-lg transition"
+            >
+              <i class="fas fa-plus mr-2"></i> New API Key
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <!-- Active API Key -->
+       <!-- Production Key -->
+<div class="mb-6 pb-6 border-b border-gray-700">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="font-semibold mb-1">Production Key</h3>
+        <p class="text-sm text-gray-400">
+          <% if (user.apiKeys.production.key) { %>
+            Created on <%= new Date(user.apiKeys.production.createdAt).toLocaleDateString() %>
+          <% } else { %>
+            Not Available - Upgrade to Pro
+          <% } %>
+        </p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="px-3 py-1 <%= user.apiKeys.production.enabled ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400' %> rounded-full text-sm">
+          <%= user.apiKeys.production.enabled ? 'Active' : 'Inactive' %>
+        </span>
+        <% if (user.apiKeys.production.key) { %>
+          <button class="text-gray-400 hover:text-white transition">
+            <i class="fas fa-trash"></i>
+          </button>
+        <% } %>
+      </div>
+    </div>
+    <div class="flex items-center gap-4 bg-gray-900/50 p-4 rounded-lg <%= !user.apiKeys.production.key ? 'opacity-50' : '' %>">
+      <code class="text-blue-400 flex-1">
+        <%= user.apiKeys.production.key || 'Upgrade to access production key' %>
+      </code>
+      <% if (user.apiKeys.production.key) { %>
+        <button class="text-gray-400 hover:text-white transition">
+          <i class="far fa-copy"></i>
+        </button>
+      <% } %>
+    </div>
+  </div>
+  
+  <!-- Test Key -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="font-semibold mb-1">Test Key</h3>
+        <p class="text-sm text-gray-400">
+          Created on <%= new Date(user.apiKeys.test.createdAt).toLocaleDateString() %>
+        </p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+          Active
+        </span>
+        <button class="text-gray-400 hover:text-white transition">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </div>
+    </div>
+    <div class="flex items-center gap-4 bg-gray-900/50 p-4 rounded-lg">
+      <code class="text-blue-400 flex-1">
+        <%= user.apiKeys.test.key %>
+      </code>
+      <button class="text-gray-400 hover:text-white transition">
+        <i class="far fa-copy"></i>
+      </button>
+    </div>
+  </div>
+
+      <!-- Recent Activity -->
+  <!-- Recent Activity -->
+<div class="relative bg-gray-800/50 rounded-xl border border-gray-700">
+    <!-- Coming Soon Overlay -->
+    <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm rounded-xl z-10 flex items-center justify-center">
+      <span class="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full text-sm font-semibold">
+        Coming Soon
+      </span>
+    </div>
+  
+    <!-- Existing Content (Blurred) -->
+    <div class="opacity-30">
+      <div class="p-6 border-b border-gray-700">
+        <h2 class="text-xl font-bold">Recent Activity</h2>
+      </div>
+      <div class="p-6">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="text-left text-gray-400">
+                <th class="pb-4">Date</th>
+                <th class="pb-4">Operation</th>
+                <th class="pb-4">File</th>
+                <th class="pb-4">Status</th>
+                <th class="pb-4">Processing Time</th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-300">
+              <tr class="border-b border-gray-700">
+                <td class="py-4">Nov 24, 2024 14:30</td>
+                <td>Watermark</td>
+                <td>promo-video.mp4</td>
+                <td><span class="text-green-400">Success</span></td>
+                <td>2m 30s</td>
+              </tr>
+              <tr class="border-b border-gray-700">
+                <td class="py-4">Nov 24, 2024 13:15</td>
+                <td>Watermark</td>
+                <td>outro.mp4</td>
+                <td><span class="text-green-400">Success</span></td>
+                <td>1m 45s</td>
+              </tr>
+              <tr class="border-b border-gray-700">
+                <td class="py-4">Nov 24, 2024 12:00</td>
+                <td>Watermark</td>
+                <td>intro.mp4</td>
+                <td><span class="text-red-400">Failed</span></td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td class="py-4">Nov 24, 2024 11:30</td>
+                <td>Watermark</td>
+                <td>marketing.mp4</td>
+                <td><span class="text-green-400">Success</span></td>
+                <td>3m 15s</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script>
+      // Add copy to clipboard functionality
+      document.querySelectorAll(".fa-copy").forEach((button) => {
+        button.addEventListener("click", function () {
+          const codeElement = this.parentElement.previousElementSibling;
+          navigator.clipboard.writeText(codeElement.textContent);
+
+          // Show feedback (you might want to add a proper tooltip)
+          alert("API key copied to clipboard");
+        });
+      });
+    </script>
+  </body>
+</html>

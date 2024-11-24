@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UtilityAPI - Login/Signup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      .form-container {
+        perspective: 1000px;
+        min-height: 480px;
+      }
+
+      .auth-form {
+        backface-visibility: hidden;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        transform: translateX(100%) rotateY(-10deg);
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+
+      .auth-form.active {
+        opacity: 1;
+        transform: translateX(0) rotateY(0);
+        pointer-events: all;
+      }
+
+      .tab-indicator {
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .spinner {
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 3px solid #fff;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .notification {
+        transform: translateY(-100%);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .notification.show {
+        transform: translateY(0);
+      }
+
+      .input-error {
+        border-color: rgb(239, 68, 68);
+      }
+
+      .error-message {
+        color: rgb(239, 68, 68);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-900 to-black text-white min-h-screen"
+  >
+    <!-- Navigation -->
+    <nav class="container mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div
+          class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+        >
+          UtilityAPI
+        </div>
+      </div>
+    </nav>
+
+    <!-- Notification -->
+    <div
+      id="notification"
+      class="notification fixed top-0 left-0 right-0 p-4 text-white text-center transition-transform hidden z-50"
+    >
+      <div
+        id="notificationContent"
+        class="max-w-md mx-auto rounded-lg p-4"
+      ></div>
+    </div>
+
+    <!-- Auth Section -->
+    <div class="container mx-auto px-6 py-12">
+      <div class="max-w-md mx-auto">
+        <!-- Tabs -->
+        <div class="relative flex mb-8">
+          <button
+            id="loginTab"
+            class="flex-1 py-3 text-center font-semibold text-blue-400 z-10"
+          >
+            Login
+          </button>
+          <button
+            id="signupTab"
+            class="flex-1 py-3 text-center font-semibold text-gray-400 hover:text-white transition z-10"
+          >
+            Sign Up
+          </button>
+          <div
+            class="tab-indicator absolute bottom-0 left-0 w-1/2 h-0.5 bg-blue-500"
+          ></div>
+        </div>
+
+        <!-- Forms Container -->
+        <div class="form-container relative">
+          <!-- Login Form -->
+          <form
+            id="loginForm"
+            class="auth-form active bg-gray-800/50 p-8 rounded-xl border border-gray-700"
+          >
+            <h2 class="text-2xl font-bold mb-6">Welcome Back</h2>
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  class="w-full px-4 py-3 bg-gray-700/50 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="your@email.com"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  required
+                  class="w-full px-4 py-3 bg-gray-700/50 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="••••••••"
+                />
+              </div>
+              <div class="flex items-center justify-between">
+                <label class="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="remember"
+                    class="w-4 h-4 bg-gray-700 border-gray-600 rounded"
+                  />
+                  <span class="ml-2 text-sm text-gray-300">Remember me</span>
+                </label>
+                <a href="#" class="text-sm text-blue-400 hover:text-blue-300"
+                  >Forgot password?</a
+                >
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 py-3 rounded-lg font-semibold transition flex items-center justify-center"
+              >
+                <span>Login</span>
+                <div class="spinner ml-3 hidden"></div>
+              </button>
+            </div>
+          </form>
+
+          <!-- Signup Form -->
+          <form
+            id="signupForm"
+            class="auth-form bg-gray-800/50 p-8 rounded-xl border border-gray-700"
+            novalidate
+          >
+            <h2 class="text-2xl font-bold mb-6">Create Account</h2>
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium mb-2">Full Name</label>
+                <input
+                  name="fullName"
+                  type="text"
+                  required
+                  class="w-full px-4 py-3 bg-gray-700/50 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="John Doe"
+                />
+                <div class="error-message hidden"></div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  class="w-full px-4 py-3 bg-gray-700/50 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="your@email.com"
+                />
+                <div class="error-message hidden"></div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Password</label>
+                <input
+                  name="password"
+                  type="password"
+                  required
+                  minlength="6"
+                  class="w-full px-4 py-3 bg-gray-700/50 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="••••••••"
+                />
+                <div class="error-message hidden"></div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2"
+                  >Confirm Password</label
+                >
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  class="w-full px-4 py-3 bg-gray-700/50 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="••••••••"
+                />
+                <div class="error-message hidden"></div>
+              </div>
+              <div class="flex items-start">
+                <input
+                  name="terms"
+                  type="checkbox"
+                  required
+                  class="mt-1 w-4 h-4 bg-gray-700 border-gray-600 rounded"
+                />
+                <span class="ml-2 text-sm text-gray-300">
+                  I agree to the
+                  <a href="#" class="text-blue-400 hover:text-blue-300"
+                    >Terms of Service</a
+                  >
+                  and
+                  <a href="#" class="text-blue-400 hover:text-blue-300"
+                    >Privacy Policy</a
+                  >
+                </span>
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 py-3 rounded-lg font-semibold transition flex items-center justify-center"
+              >
+                <span id="buttonText">Create Account</span>
+                <div id="spinner" class="spinner ml-3 hidden"></div>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Form elements
+        const loginFormEl = document.getElementById("loginForm");
+        const signupFormEl = document.getElementById("signupForm");
+        const loginTab = document.getElementById("loginTab");
+        const signupTab = document.getElementById("signupTab");
+        const tabIndicator = document.querySelector(".tab-indicator");
+
+        // UI elements
+        const notification = document.getElementById("notification");
+        const notificationContent = document.getElementById(
+          "notificationContent"
+        );
+        const buttonText = document.getElementById("buttonText");
+        const spinner = document.getElementById("spinner");
+
+        // Shared notification function
+        function showNotification(message, type = "success") {
+          notification.classList.remove("hidden");
+          notificationContent.textContent = message;
+          notificationContent.className = `max-w-md mx-auto rounded-lg p-4 ${
+            type === "success" ? "bg-green-500" : "bg-red-500"
+          }`;
+          notification.classList.add("show");
+
+          setTimeout(() => {
+            notification.classList.remove("show");
+            setTimeout(() => notification.classList.add("hidden"), 300);
+          }, 3000);
+        }
+
+        // Loading state management
+        function setLoading(form, isLoading, loadingText = "Processing...") {
+          const submitButton = form.querySelector('button[type="submit"]');
+          const buttonSpinner = submitButton.querySelector(".spinner");
+          const buttonText = submitButton.querySelector("span");
+
+          if (isLoading) {
+            submitButton.disabled = true;
+            buttonText.textContent = loadingText;
+            buttonSpinner.classList.remove("hidden");
+          } else {
+            submitButton.disabled = false;
+            buttonText.textContent =
+              form.id === "loginForm" ? "Login" : "Create Account";
+            buttonSpinner.classList.add("hidden");
+          }
+        }
+
+        // Login form handler
+        // Login form handler
+        loginFormEl.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = new FormData(loginFormEl);
+          const data = Object.fromEntries(formData);
+
+          if (!data.email || !data.password) {
+            showNotification("Please fill in all fields", "error");
+            return;
+          }
+
+          setLoading(loginFormEl, true, "Logging in...");
+
+          try {
+            const response = await fetch("/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json", // Add this to request JSON response
+              },
+              body: JSON.stringify({
+                email: data.email,
+                password: data.password,
+                remember: data.remember === "on",
+              }),
+            });
+
+            // Check content type of response
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              const result = await response.json();
+
+              if (!response.ok) {
+                throw new Error(result.error || "Login failed");
+              }
+
+              if (result.token) {
+                localStorage.setItem("token", result.token);
+              }
+
+              showNotification("Login successful!");
+
+              setTimeout(() => {
+                window.location.href = "/dashboard";
+              }, 1000);
+            } else {
+              // Handle HTML response (redirect)
+              if (response.redirected) {
+                window.location.href = response.url;
+              } else {
+                throw new Error("Unexpected response from server");
+              }
+            }
+          } catch (error) {
+            showNotification(error.message, "error");
+          } finally {
+            setLoading(loginFormEl, false);
+          }
+        });
+
+        // Signup form handler
+        signupFormEl.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = new FormData(signupFormEl);
+          const data = Object.fromEntries(formData);
+
+          if (data.password !== data.confirmPassword) {
+            showNotification("Passwords do not match", "error");
+            return;
+          }
+
+          if (data.password.length < 6) {
+            showNotification("Password must be at least 6 characters", "error");
+            return;
+          }
+
+          if (!data.terms) {
+            showNotification("Please accept the terms and conditions", "error");
+            return;
+          }
+
+          setLoading(signupFormEl, true, "Creating Account...");
+
+          try {
+            const response = await fetch("/api/signup", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                name: data.fullName, // Changed from fullName to name to match model
+                email: data.email,
+                password: data.password,
+              }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+              throw new Error(result.error || "Signup failed");
+            }
+
+            showNotification("Account created successfully! Please log in.");
+            signupFormEl.reset();
+            loginTab.click();
+          } catch (error) {
+            showNotification(error.message, "error");
+          } finally {
+            setLoading(signupFormEl, false);
+          }
+        });
+
+        // Tab switching handlers
+        loginTab.addEventListener("click", () => {
+          loginTab.classList.add("text-blue-400");
+          loginTab.classList.remove("text-gray-400");
+          signupTab.classList.add("text-gray-400");
+          signupTab.classList.remove("text-blue-400");
+
+          tabIndicator.style.transform = "translateX(0)";
+
+          loginForm.classList.remove("sliding-out", "sliding-in");
+          loginForm.classList.add("active");
+          signupForm.classList.add("sliding-in");
+          signupForm.classList.remove("active", "sliding-out");
+        });
+
+        signupTab.addEventListener("click", () => {
+          signupTab.classList.add("text-blue-400");
+          signupTab.classList.remove("text-gray-400");
+          loginTab.classList.add("text-gray-400");
+          loginTab.classList.remove("text-blue-400");
+
+          tabIndicator.style.transform = "translateX(100%)";
+
+          signupForm.classList.remove("sliding-out", "sliding-in");
+          signupForm.classList.add("active");
+          loginForm.classList.add("sliding-out");
+          loginForm.classList.remove("active", "sliding-in");
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -8,17 +8,24 @@ import path from "path";
 import User from "../models/user.js";
 import Ffmpeg from "fluent-ffmpeg";
 import { rootCertificates } from "tls";
+import jwt from "jsonwebtoken";
+import passport from "passport";
+import { isAuth } from "../Middleware/auth.js";
+import bcrypt from "bcryptjs";
 const router = express.Router();
 
 router.get("/", (req, res) => {
   res.render("index");
 });
 
-router.get("/watermark", (req, res) => {
+router.get("/sigin", (req, res) => {
+  res.render("siginin");
+});
+
+router.get("/watermark", isAuth, (req, res) => {
   res.render("watermark");
 });
-// Video watermark route
-// Helper function for cleanup
+
 const cleanupFiles = async (inputPath, outputPath) => {
   try {
     if (inputPath && fs.existsSync(inputPath)) {
@@ -108,5 +115,142 @@ router.post("/watermark", upload.single("video"), async (req, res) => {
       details: error.message,
     });
   }
+});
+
+router.get("/dashboard", isAuth, (req, res) => {
+  res.render("dashboard", { user: req.user });
+});
+
+// Sign up route
+router.post("/api/signup", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Check if user exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create new user
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+    // Remove password from response
+    user.password = undefined;
+
+    res.status(201).json({
+      status: "success",
+      data: { user },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "fail",
+      error: error.message,
+    });
+  }
+});
+
+// Login route
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", async (err, user, info) => {
+    if (err) {
+      console.error("Login error:", err);
+      return res.status(500).json({
+        status: "error",
+        error: "Internal server error",
+      });
+    }
+
+    try {
+      // Find user with password field included
+      const userWithPassword = await User.findOne({
+        email: req.body.email,
+      }).select("+password");
+
+      if (!userWithPassword) {
+        if (req.xhr || req.headers.accept.indexOf("json") > -1) {
+          return res.status(401).json({
+            status: "fail",
+            error: "Invalid credentials",
+          });
+        }
+        req.flash("error", "Invalid credentials");
+        return res.redirect("/login");
+      }
+
+      // Compare password with hash
+      const isValidPassword = await bcrypt.compare(
+        req.body.password,
+        userWithPassword.password
+      );
+
+      if (!isValidPassword) {
+        if (req.xhr || req.headers.accept.indexOf("json") > -1) {
+          return res.status(401).json({
+            status: "fail",
+            error: "Invalid credentials",
+          });
+        }
+        req.flash("error", "Invalid credentials");
+        return res.redirect("/login");
+      }
+
+      // Remove password from user object
+      userWithPassword.password = undefined;
+
+      // Log in the user
+      req.logIn(userWithPassword, async (err) => {
+        if (err) {
+          console.error("Session error:", err);
+          return res.status(500).json({
+            status: "error",
+            error: "Login failed",
+          });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+          { id: userWithPassword._id },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: process.env.JWT_EXPIRES_IN,
+          }
+        );
+
+        // Set cookie for web clients
+        res.cookie("jwt", token, {
+          expires: new Date(
+            Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+          ),
+          secure: process.env.NODE_ENV === "production",
+          httpOnly: true,
+        });
+
+        // Handle API vs form response
+        if (req.xhr || req.headers.accept.indexOf("json") > -1) {
+          return res.status(200).json({
+            status: "success",
+            token,
+            data: { user: userWithPassword },
+          });
+        }
+
+        // Redirect web clients
+        return res.redirect("/dashboard");
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      return res.status(500).json({
+        status: "error",
+        error: "Login failed",
+      });
+    }
+  })(req, res, next);
 });
 export default router;
