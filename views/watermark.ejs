@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UtilityAPI - Video Watermark Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-900 to-black text-white min-h-screen"
+  >
+    <!-- Navigation -->
+    <nav class="container mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div
+          class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+        >
+          UtilityAPI
+        </div>
+        <a href="/" class="text-gray-400 hover:text-white transition"
+          >Back to Home</a
+        >
+      </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-12">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-12">
+          Video
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+          >
+            Watermark Tool
+          </span>
+        </h1>
+
+        <!-- Drop Zone -->
+        <div class="relative mb-8">
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl blur-lg"
+          ></div>
+          <div
+            class="drop-zone relative bg-gray-800/50 border-2 border-dashed border-gray-700 hover:border-blue-500 rounded-xl p-12 transition-all cursor-pointer"
+          >
+            <div class="flex flex-col items-center justify-center gap-4">
+              <i class="fas fa-cloud-upload-alt text-4xl text-blue-400"></i>
+              <span class="drop-zone__prompt text-gray-300"
+                >Drop video file here or click to upload</span
+              >
+              <input
+                type="file"
+                name="video"
+                class="drop-zone__input hidden"
+                accept="video/*"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Watermark Text Input -->
+        <div class="mb-8">
+          <input
+            type="text"
+            id="watermarkText"
+            placeholder="Enter watermark text"
+            class="w-full bg-gray-800/50 border border-gray-700 focus:border-blue-500 rounded-lg px-4 py-3 text-white placeholder-gray-400 outline-none transition"
+          />
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar hidden mb-8">
+          <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div
+              class="progress-bar__fill h-full w-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Process Button -->
+        <button
+          id="processBtn"
+          disabled
+          class="w-full mb-8 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed px-8 py-3 rounded-lg font-semibold transition"
+        >
+          Process Video
+        </button>
+
+        <!-- Video Preview -->
+        <video
+          class="preview hidden w-full rounded-lg bg-gray-800/50 mb-8"
+          controls
+        >
+          Your browser does not support the video tag.
+        </video>
+
+        <!-- Download Button -->
+        <a
+          id="downloadBtn"
+          class="hidden w-full bg-green-500 hover:bg-green-600 px-8 py-3 rounded-lg font-semibold text-center transition"
+        >
+          Download Processed Video
+        </a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const dropZone = document.querySelector(".drop-zone");
+        const input = dropZone.querySelector(".drop-zone__input");
+        const prompt = dropZone.querySelector(".drop-zone__prompt");
+        const progressBar = document.querySelector(".progress-bar");
+        const progressFill = document.querySelector(".progress-bar__fill");
+        const processBtn = document.querySelector("#processBtn");
+        const preview = document.querySelector(".preview");
+        const downloadBtn = document.querySelector("#downloadBtn");
+        const watermarkText = document.querySelector("#watermarkText");
+
+        let selectedFile = null;
+
+        ["dragover", "dragleave", "drop"].forEach((eventName) => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          });
+        });
+
+        dropZone.addEventListener("dragover", () => {
+          dropZone.classList.add("border-blue-500");
+          dropZone.classList.add("bg-blue-500/5");
+        });
+
+        ["dragleave", "drop"].forEach((eventName) => {
+          dropZone.addEventListener(eventName, () => {
+            dropZone.classList.remove("border-blue-500");
+            dropZone.classList.remove("bg-blue-500/5");
+          });
+        });
+
+        dropZone.addEventListener("drop", (e) => {
+          selectedFile = e.dataTransfer.files[0];
+          updateUI();
+        });
+
+        dropZone.addEventListener("click", () => input.click());
+
+        input.addEventListener("change", () => {
+          selectedFile = input.files[0];
+          updateUI();
+        });
+
+        function updateUI() {
+          if (selectedFile) {
+            prompt.innerHTML = `<span class="text-blue-400">${selectedFile.name}</span>`;
+            processBtn.disabled = false;
+          }
+        }
+
+        processBtn.addEventListener("click", async () => {
+          if (!selectedFile) return;
+
+          const formData = new FormData();
+          formData.append("video", selectedFile);
+          formData.append("text", watermarkText.value || "Watermark");
+
+          progressBar.classList.remove("hidden");
+          processBtn.disabled = true;
+
+          try {
+            const response = await fetch("/watermark", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!response.ok) throw new Error("Processing failed");
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            preview.src = url;
+            preview.classList.remove("hidden");
+
+            downloadBtn.href = url;
+            downloadBtn.download = "watermarked_video.mp4";
+            downloadBtn.classList.remove("hidden");
+
+            progressFill.style.width = "100%";
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to process video");
+          } finally {
+            setTimeout(() => {
+              progressBar.classList.add("hidden");
+              progressFill.style.width = "0%";
+              processBtn.disabled = false;
+            }, 1000);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

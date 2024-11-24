@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UtilityAPI - Video Processing Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-black text-white">
+    <!-- Navigation -->
+    <nav class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                UtilityAPI
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#features" class="hover:text-blue-400 transition">Features</a>
+                <a href="#demo" class="hover:text-blue-400 transition">Demo</a>
+                <a href="#pricing" class="hover:text-blue-400 transition">Pricing</a>
+            </div>
+            <button class="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded-full transition">
+                Get Started
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="container mx-auto px-6 py-20">
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2">
+                <h1 class="text-5xl font-bold mb-8">
+                    Complete Video
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                        Processing Suite
+                    </span>
+                </h1>
+                <p class="text-xl text-gray-300 mb-8">
+                    Your one-stop solution for video processing, audio enhancement, and streaming needs.
+                    Start with our powerful watermarking tool today, with more features rolling out soon!
+                </p>
+                <div class="flex space-x-4">
+                    <button class="bg-blue-500 hover:bg-blue-600 px-8 py-3 rounded-full transition">
+                        Try Demo
+                    </button>
+                    <button class="border border-blue-500 hover:bg-blue-500/10 px-8 py-3 rounded-full transition">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-1/2 mt-12 md:mt-0">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl"></div>
+                    <div class="relative bg-gray-800 p-8 rounded-xl border border-gray-700">
+                        <pre class="text-sm text-gray-300">
+<span class="text-purple-400">import</span> utilityapi
+
+video = utilityapi.load(<span class="text-green-400">"video.mp4"</span>)
+watermark = utilityapi.Watermark(
+    text=<span class="text-green-400">"© My Brand"</span>,
+    position=<span class="text-green-400">"bottom-right"</span>
+)
+
+video.add_watermark(watermark)
+video.save(<span class="text-green-400">"protected.mp4"</span>)</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="container mx-auto px-6 py-20">
+        <h2 class="text-3xl font-bold text-center mb-16">Our Comprehensive Suite</h2>
+        
+        <!-- Video Processing -->
+        <div class="mb-20">
+            <h3 class="text-2xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Video Processing
+            </h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-stamp text-4xl text-blue-400"></i>
+                        <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">Available Now</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Video Watermarking</h4>
+                    <p class="text-gray-300">Add custom text or logo watermarks to videos with full customization options.</p>
+                </div>
+                
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-compress-arrows-alt text-4xl text-purple-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Batch Compression</h4>
+                    <p class="text-gray-300">Compress multiple videos while maintaining quality. Perfect for storage optimization.</p>
+                </div>
+
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-random text-4xl text-blue-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Format Converter</h4>
+                    <p class="text-gray-300">Convert between popular video formats like MP4, AVI, MOV, and MKV.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Projects -->
+        <div class="mb-20">
+            <h3 class="text-2xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Audio Projects
+            </h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-microphone text-4xl text-purple-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Podcast Audio Processor</h4>
+                    <p class="text-gray-300">Clean and normalize audio files with noise reduction and level balancing.</p>
+                </div>
+
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-wave-square text-4xl text-blue-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Audio Visualizer</h4>
+                    <p class="text-gray-300">Generate dynamic waveform and spectrum visualizations for your audio tracks.</p>
+                </div>
+
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-comment text-4xl text-purple-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Text-to-Speech Video</h4>
+                    <p class="text-gray-300">Convert text to engaging video slideshows with professional voiceovers.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Editing -->
+        <div class="mb-20">
+            <h3 class="text-2xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Video Editing Tools
+            </h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-film text-4xl text-blue-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Highlight Reel Creator</h4>
+                    <p class="text-gray-300">Automatically compile the best moments from your videos into engaging highlight reels.</p>
+                </div>
+
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-clock text-4xl text-purple-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Timelapse Generator</h4>
+                    <p class="text-gray-300">Create stunning timelapses with customizable speeds and transitions.</p>
+                </div>
+
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-closed-captioning text-4xl text-blue-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Subtitle Injector</h4>
+                    <p class="text-gray-300">Automatically burn subtitles into your videos from SRT files.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Streaming -->
+        <div class="mb-20">
+            <h3 class="text-2xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Streaming Solutions
+            </h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-broadcast-tower text-4xl text-purple-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Custom Streaming Server</h4>
+                    <p class="text-gray-300">Set up your own RTMP streaming server for games and events with minimal configuration.</p>
+                </div>
+
+                <div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <i class="fas fa-camera text-4xl text-blue-400"></i>
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm">Coming Soon</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Live Webcam Effects</h4>
+                    <p class="text-gray-300">Apply real-time filters and effects to your webcam feed for streaming.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="container mx-auto px-6 py-20">
+        <div class="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl p-12">
+            <h2 class="text-3xl font-bold text-center mb-8">See it in Action</h2>
+            <div class="max-w-2xl mx-auto bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
+                <div class="relative aspect-video bg-black">
+                    <img src="/api/placeholder/800/450" alt="Video Demo" class="w-full h-full object-cover" />
+                    <div class="absolute bottom-4 right-4 text-sm bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                        © UtilityAPI Demo
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="container mx-auto px-6 py-20">
+        <div class="text-center max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8">Feature Roadmap</h2>
+            <p class="text-xl text-gray-300 mb-8">
+                We're constantly expanding our suite of tools. Video watermarking is available now, 
+                with new features being released every month. Subscribe to our newsletter to stay updated!
+            </p>
+            <button class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 px-12 py-4 rounded-full text-lg font-semibol
