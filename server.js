@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import bodyParser from "body-parser";
 import connectDB from "./Middleware/database_connection.js";
@@ -6,10 +5,8 @@ import cors from "cors";
 import router from "./Routes/routes.js";
 import sessionManagement from "./Middleware/session.js";
 import dotenv from "dotenv";
-import passport, { initializePassport } from "./Middleware/passportConfig.js";
-import session from "express-session";
+import passport from "./Middleware/passportConfig.js";
 
-// Load environment variables first
 dotenv.config();
 
 // Validate required environment variables
@@ -25,18 +22,37 @@ if (missingEnvVars.length) {
 }
 
 const app = express();
+
+// Basic middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
-
 app.use("/uploads", express.static("uploads"));
 
+// Database and session setup
 await connectDB();
-
 await sessionManagement(app);
 
+// Routes
 app.use("/", router);
+
+// Logout route
+app.get("/logout", (req, res) => {
+  try {
+    res.clearCookie("jwt");
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Logout error:", err);
+        return res.status(500).json({ error: "Failed to logout" });
+      }
+      res.redirect("/");
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ error: "Failed to logout" });
+  }
+});
 
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");
