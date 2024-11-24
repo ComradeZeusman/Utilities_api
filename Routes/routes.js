@@ -18,74 +18,95 @@ router.get("/watermark", (req, res) => {
   res.render("watermark");
 });
 // Video watermark route
+// Helper function for cleanup
+const cleanupFiles = async (inputPath, outputPath) => {
+  try {
+    if (inputPath && fs.existsSync(inputPath)) {
+      await fs.promises.unlink(inputPath);
+    }
+    if (outputPath && fs.existsSync(outputPath)) {
+      await fs.promises.unlink(outputPath);
+    }
+  } catch (err) {
+    console.error("Cleanup error:", err);
+  }
+};
+
+// Helper function to sanitize path
+function sanitizePath(filePath) {
+  return filePath.replace(/[^a-zA-Z0-9-_/.]/g, "_").replace(/\s+/g, "_");
+}
+
 router.post("/watermark", upload.single("video"), async (req, res) => {
+  let inputPath = null;
+  let outputPath = null;
+
   try {
     const { text = "Watermark" } = req.body;
     if (!req.file) {
       return res.status(400).json({ error: "No video file provided" });
     }
 
-    const inputPath = req.file.path;
-    const originalName = req.file.originalname;
-    const outputPath = path.join(
-      "temp",
-      `watermarked_${Date.now()}_${originalName}`
-    );
+    inputPath = path.resolve(req.file.path).replace(/\\/g, "/");
+    const tempDir = path.resolve("temp");
+    await fs.promises.mkdir(tempDir, { recursive: true });
 
-    // Ensure temp directory exists
-    if (!fs.existsSync("temp")) {
-      fs.mkdirSync("temp");
-    }
+    const sanitizedFileName = `watermarked_${Date.now()}_${path.basename(
+      req.file.originalname
+    )}`.replace(/[^a-zA-Z0-9-_.]/g, "_");
+    outputPath = path.join(tempDir, sanitizedFileName).replace(/\\/g, "/");
 
-    // Add watermark using ffmpeg
     await new Promise((resolve, reject) => {
       ffmpeg(inputPath)
         .videoFilters({
           filter: "drawtext",
           options: {
             text: text,
-            fontsize: 36,
+            fontsize: "(h/20)", // Dynamic font size based on video height
             fontcolor: "white",
-            x: "10", // 10 pixels from left
-            y: "h-th-10", // 10 pixels from bottom
+            x: "(w/50)", // 2% from left edge
+            y: "h-th-h/50", // Bottom with 2% padding
             shadowcolor: "black",
             shadowx: 2,
             shadowy: 2,
-            box: 1, // Add background box
-            boxcolor: "black@0.4", // Semi-transparent background
-            boxborderw: 5, // Box padding
+            box: 1,
+            boxcolor: "black@0.5",
+            boxborderw: 5,
+            font: "Arial",
           },
         })
         .outputOptions([
-          "-c:v copy", // Copy video codec
-          "-c:a copy", // Copy audio codec
-          "-movflags +faststart", // Optimize for web playback
+          "-vcodec libx264",
+          "-acodec copy",
+          "-preset ultrafast",
+          "-crf 23", // Maintain good quality
+          "-movflags +faststart",
         ])
-        .output(outputPath)
+        .on("start", (cmdline) => {
+          console.log("Started ffmpeg with command:", cmdline);
+        })
+        .on("progress", (progress) => {
+          console.log(`Processing: ${progress.percent}% done`);
+        })
+        .on("error", (err) => {
+          console.error("FFmpeg error:", err);
+          reject(err);
+        })
         .on("end", () => resolve())
-        .on("error", (err) => reject(err))
-        .run();
+        .save(outputPath);
     });
 
-    // Send processed file with original name
-    res.download(outputPath, originalName, (err) => {
-      // Cleanup after sending
-      try {
-        if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
-        if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
-      } catch (cleanupError) {
-        console.error("Cleanup error:", cleanupError);
-      }
+    return res.download(outputPath, req.file.originalname, (err) => {
+      if (err) console.error("Download error:", err);
+      cleanupFiles(inputPath, outputPath);
     });
   } catch (error) {
-    console.error(error);
-    // Cleanup on error
-    try {
-      if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
-    } catch (cleanupError) {
-      console.error("Cleanup error:", cleanupError);
-    }
-    res.status(500).json({ error: "Error processing video" });
+    console.error("Processing error:", error);
+    await cleanupFiles(inputPath, outputPath);
+    return res.status(500).json({
+      error: "Error processing video",
+      details: error.message,
+    });
   }
 });
 export default router;
