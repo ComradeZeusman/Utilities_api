@@ -93,8 +93,8 @@ router.post(
         await user.save();
       } else {
         if (user.apiKeys.test.key === apiKey) {
-          user.Demo_try_count += 1;
-          if (user.Demo_try_count >= 30) {
+          user.watermark_demo_count += 1;
+          if (user.watermark_demo_count >= 30) {
             return res
               .status(403)
               .json({ error: "Test key demo limit reached" });

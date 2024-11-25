@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    watermark_demo_count: {
+      type: Number,
+      default: 0,
+    },
     apiKeys: {
       test: {
         key: {
