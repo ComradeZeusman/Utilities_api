@@ -5,7 +5,7 @@ import passport from "passport";
 
 async function sessionManagement(app) {
   const sessionStore = MongoStore.create({
-    mongoUrl: "mongodb://localhost:27017/API_UTILITY",
+    mongoUrl: process.env.MONGODB_URI,
     ttl: 24 * 60 * 60, // 1 day
   });
 
