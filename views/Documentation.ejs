@@ -155,7 +155,7 @@ const form = new FormData();
 form.append('video', videoFile);
 form.append('text', 'My Watermark');
 
-const response = await fetch('https://api.utilityapi.com/watermark', {
+const response = await fetch('https://utilities-api-x5hm.onrender.com/watermark', {
   method: 'POST',
   headers: {
     'x-api-key': 'your_api_key_here'
@@ -179,7 +179,7 @@ a.click();
               ><code class="language-python">
 import requests
 
-url = 'https://api.utilityapi.com/watermark'
+url = 'https://utilities-api-x5hm.onrender.com/watermark'
 headers = {
   'x-api-key': 'your_api_key_here'
 }
@@ -207,7 +207,7 @@ $curl = curl_init();
 $file = new CURLFile('video.mp4');
 
 curl_setopt_array($curl, [
-  CURLOPT_URL => 'https://api.utilityapi.com/watermark',
+  CURLOPT_URL => 'https://utilities-api-x5hm.onrender.com/watermark',
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_POST => true,
   CURLOPT_HTTPHEADER => [
@@ -387,7 +387,7 @@ a.click();
               ><code class="language-python">
 import requests
 
-url = 'https://api.utilityapi.com/split-screen'
+url = 'https://utilities-api-x5hm.onrender.com//split-screen'
 headers = {
   'x-api-key': 'your_api_key_here'
 }
@@ -435,7 +435,7 @@ $data = [
 ];
 
 curl_setopt_array($curl, [
-  CURLOPT_URL => 'https://api.utilityapi.com/split-screen',
+  CURLOPT_URL => 'https://utilities-api-x5hm.onrender.com//split-screen',
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_POST => true,
   CURLOPT_HTTPHEADER => [
