@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    splitscreen_demo_count: {
+      type: Number,
+      default: 0,
+    },
     apiKeys: {
       test: {
         key: {
