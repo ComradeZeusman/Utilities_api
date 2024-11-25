@@ -14,39 +14,60 @@
     class="bg-gradient-to-br from-gray-900 to-black text-white min-h-screen"
   >
     <!-- Navigation -->
-    <nav class="border-b border-gray-800">
-      <div class="container mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-8">
-            <div
-              class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
-            >
-              UtilityAPI
+    <body class="bg-gradient-to-br from-gray-900 to-black text-white min-h-screen">
+      <!-- Navigation -->
+      <nav class="border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-8">
+              <div
+                class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+              >
+                UtilityAPI
+              </div>
+              <!-- Desktop navigation links -->
+              <div class="hidden md:flex space-x-6">
+                <a href="#" class="text-blue-400">Dashboard</a>
+                <a href="/Documentation" class="text-gray-400 hover:text-white transition">Documentation</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Support</a>
+                <a href="/try" class="text-gray-400 hover:text-white transition">Demos</a>
+                <a href="/logout" class="text-gray-400 hover:text-white transition">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+              </div>
             </div>
-            <div class="hidden md:flex space-x-6">
-              <a href="#" class="text-blue-400">Dashboard</a>
-              <a href="/Documentation" class="text-gray-400 hover:text-white transition"
-                >Documentation</a
-              >
-              <a href="#" class="text-gray-400 hover:text-white transition"
-                >Support</a
-              >
-              <a href="/try" class="text-gray-400 hover:text-white transition"
-              >Demos</a
-            >
+            <!-- User Info and Mobile Menu Button -->
+            <div class="flex items-center gap-4">
+              <span class="text-gray-400 hidden md:inline"><%= user.name %></span>
+              <span class="text-gray-400 hidden md:inline"><%= user.email %></span>
+       
+              <button id="mobile-menu-button" class="md:hidden">
+                <i class="fas fa-bars text-2xl"></i>
+              </button>
             </div>
           </div>
-          <div class="flex items-center gap-4">
-            <span class="text-gray-400"><%= user.name %></span>
-            <span class="text-gray-400"><%= user.email %></span>
-            <a href="/logout" class="text-gray-400 hover:text-white transition">
-            <i class="fas fa-sign-out-alt"></i>
-          </a>
+          <!-- Mobile navigation links -->
+          <div id="mobile-menu" class="md:hidden mt-4 hidden">
+            <a href="#" class="block text-blue-400 py-2">Dashboard</a>
+            <a href="/Documentation" class="block text-gray-400 hover:text-white transition py-2">Documentation</a>
+            <a href="#" class="block text-gray-400 hover:text-white transition py-2">Support</a>
+            <a href="/try" class="block text-gray-400 hover:text-white transition py-2">Demos</a>
+            <a href="/logout" class="block text-gray-400 hover:text-white transition py-2">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
 
+      <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+    
+        mobileMenuButton.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      </script>
+    </body>
     <div class="container mx-auto px-6 py-8">
       <!-- Usage Overview -->
      <!-- Usage Overview -->
