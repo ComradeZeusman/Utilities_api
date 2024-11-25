@@ -94,7 +94,7 @@ router.post(
       } else {
         if (user.apiKeys.test.key === apiKey) {
           user.Demo_try_count += 1;
-          if (user.Demo_try_count >= 5) {
+          if (user.Demo_try_count >= 30) {
             return res
               .status(403)
               .json({ error: "Test key demo limit reached" });
