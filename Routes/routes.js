@@ -363,6 +363,10 @@ router.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
+router.get("/Documentation", (req, res) => {
+  res.render("Documentation");
+});
+
 router.get("/try", isAuth, (req, res) => {
   res.render("try");
 });
