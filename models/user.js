@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true, // Ensure email uniqueness
       lowercase: true,
       trim: true,
     },
@@ -45,8 +45,7 @@ const userSchema = new mongoose.Schema(
       test: {
         key: {
           type: String,
-          unique: true,
-          sparse: true,
+          // Removed unique and sparse options from here
         },
         createdAt: {
           type: Date,
@@ -56,8 +55,7 @@ const userSchema = new mongoose.Schema(
       production: {
         key: {
           type: String,
-          unique: true,
-          sparse: true,
+          // Removed unique and sparse options from here
         },
         createdAt: {
           type: Date,
@@ -138,10 +136,13 @@ userSchema.methods.refreshApiKeys = async function () {
   return this.save();
 };
 
-// Indexes for performance
-userSchema.index({ email: 1 });
-userSchema.index({ "apiKeys.test.key": 1 });
-userSchema.index({ "apiKeys.production.key": 1 });
+// Define indexes with unique and sparse options
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ "apiKeys.test.key": 1 }, { unique: true, sparse: true });
+userSchema.index(
+  { "apiKeys.production.key": 1 },
+  { unique: true, sparse: true }
+);
 
 const User = mongoose.model("User", userSchema);
 
