@@ -133,41 +133,31 @@
         <div class="p-6">
           <!-- Active API Key -->
        <!-- Production Key -->
-<div class="mb-6 pb-6 border-b border-gray-700">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h3 class="font-semibold mb-1">Production Key</h3>
-        <p class="text-sm text-gray-400">
-          <% if (user.apiKeys.production.key) { %>
-            Created on <%= new Date(user.apiKeys.production.createdAt).toLocaleDateString() %>
-          <% } else { %>
-            Not Available - Upgrade to Pro
-          <% } %>
-        </p>
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="px-3 py-1 <%= user.apiKeys.production.enabled ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400' %> rounded-full text-sm">
-          <%= user.apiKeys.production.enabled ? 'Active' : 'Inactive' %>
-        </span>
-        <% if (user.apiKeys.production.key) { %>
-          <button class="text-gray-400 hover:text-white transition">
-            <i class="fas fa-trash"></i>
-          </button>
+       <div class="mb-6 pb-6 border-b border-gray-700">
+        <% if (user.plan !== 'free') { %>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-semibold mb-1">Production Key</h3>
+              <p class="text-sm text-gray-400">
+                Created on <%= new Date(user.apiKeys.production.createdAt).toLocaleDateString() %>
+              </p>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="px-3 py-1 <%= user.apiKeys.production.enabled ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400' %> rounded-full text-sm">
+                <%= user.apiKeys.production.enabled ? 'Active' : 'Inactive' %>
+              </span>
+              <button class="text-gray-400 hover:text-white transition">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% } else { %>
+          <div class="text-center py-4">
+            <h3 class="font-semibold mb-2">Production API Access</h3>
+            <p class="text-sm text-gray-400">Upgrade to Basic or Pro plan to access production API keys</p>
+          </div>
         <% } %>
       </div>
-    </div>
-    <div class="flex items-center gap-4 bg-gray-900/50 p-4 rounded-lg <%= !user.apiKeys.production.key ? 'opacity-50' : '' %>">
-      <code class="text-blue-400 flex-1">
-        <%= user.apiKeys.production.key || 'Upgrade to access production key' %>
-      </code>
-      <% if (user.apiKeys.production.key) { %>
-        <button class="text-gray-400 hover:text-white transition">
-          <i class="far fa-copy"></i>
-        </button>
-      <% } %>
-    </div>
-  </div>
-  
   <!-- Test Key -->
   <div>
     <div class="flex items-center justify-between mb-4">

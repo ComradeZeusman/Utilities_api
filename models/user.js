@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
 
-// Helper function to generate API key
 function generateApiKey(prefix) {
   const randomBytes = crypto.randomBytes(16).toString("hex");
   return `${prefix}_${randomBytes}`;
@@ -17,7 +16,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true, // Ensure email uniqueness
+      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -45,7 +44,7 @@ const userSchema = new mongoose.Schema(
       test: {
         key: {
           type: String,
-          // Removed unique and sparse options from here
+          required: true,
         },
         createdAt: {
           type: Date,
@@ -55,7 +54,7 @@ const userSchema = new mongoose.Schema(
       production: {
         key: {
           type: String,
-          // Removed unique and sparse options from here
+          required: true,
         },
         createdAt: {
           type: Date,
@@ -96,30 +95,23 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Generate API keys before saving new user
-userSchema.pre("save", async function (next) {
-  if (this.isNew) {
-    // Generate test key for all users
-    this.apiKeys = {
-      test: {
-        key: generateApiKey("test"),
-        createdAt: new Date(),
-      },
-      production: {
-        key: null,
-        enabled: false,
-      },
-    };
-
-    // Generate production key for paid plans
-    if (this.plan !== "free") {
-      this.apiKeys.production = {
-        key: generateApiKey("prod"),
-        createdAt: new Date(),
-        enabled: true,
-      };
-    }
+// Replace pre-save with pre-validate
+userSchema.pre("validate", async function (next) {
+  // Generate API keys if they don't exist
+  if (!this.apiKeys?.test?.key) {
+    if (!this.apiKeys) this.apiKeys = {};
+    if (!this.apiKeys.test) this.apiKeys.test = {};
+    this.apiKeys.test.key = generateApiKey("test");
+    this.apiKeys.test.createdAt = new Date();
   }
+
+  if (!this.apiKeys?.production?.key) {
+    if (!this.apiKeys.production) this.apiKeys.production = {};
+    this.apiKeys.production.key = generateApiKey("prod");
+    this.apiKeys.production.createdAt = new Date();
+    this.apiKeys.production.enabled = this.plan !== "free";
+  }
+
   next();
 });
 
@@ -128,21 +120,47 @@ userSchema.methods.refreshApiKeys = async function () {
   this.apiKeys.test.key = generateApiKey("test");
   this.apiKeys.test.createdAt = new Date();
 
-  if (this.plan !== "free") {
-    this.apiKeys.production.key = generateApiKey("prod");
-    this.apiKeys.production.createdAt = new Date();
-  }
+  this.apiKeys.production.key = generateApiKey("prod");
+  this.apiKeys.production.createdAt = new Date();
+  // Maintain existing enabled status
 
   return this.save();
 };
 
-// Define indexes with unique and sparse options
+// Method to check if user can make API requests
+userSchema.methods.canMakeRequest = function () {
+  return (
+    this.status === "active" &&
+    this.usage.requestCount < this.usage.monthlyLimit
+  );
+};
+
+// Method to increment request count
+userSchema.methods.incrementRequestCount = async function () {
+  this.usage.requestCount += 1;
+  this.usage.lastRequest = new Date();
+  return this.save();
+};
+
+// Method to reset monthly usage
+userSchema.methods.resetMonthlyUsage = async function () {
+  this.usage.requestCount = 0;
+  return this.save();
+};
+
+// Method to upgrade plan
+userSchema.methods.upgradePlan = async function (newPlan) {
+  this.plan = newPlan;
+  if (newPlan !== "free") {
+    this.apiKeys.production.enabled = true;
+  }
+  return this.save();
+};
+
+// Indexes
 userSchema.index({ email: 1 }, { unique: true });
-userSchema.index({ "apiKeys.test.key": 1 }, { unique: true, sparse: true });
-userSchema.index(
-  { "apiKeys.production.key": 1 },
-  { unique: true, sparse: true }
-);
+userSchema.index({ "apiKeys.test.key": 1 }, { unique: true });
+userSchema.index({ "apiKeys.production.key": 1 }, { unique: true });
 
 const User = mongoose.model("User", userSchema);
 
