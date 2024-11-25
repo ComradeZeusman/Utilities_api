@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UtilityAPI - Demo Directory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-900 to-black text-white min-h-screen"
+  >
+    <nav class="container mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div
+          class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+        >
+          UtilityAPI Demos
+        </div>
+        <a href="/dashboard" class="hover:text-blue-400 transition"
+          >Back to Home</a
+        >
+      </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-12">
+      <h1 class="text-4xl font-bold mb-12 text-center">
+        Interactive API Demos
+      </h1>
+
+      <!-- Video Processing -->
+      <div class="mb-16">
+        <h2
+          class="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+        >
+          Video Processing
+        </h2>
+        <div class="grid gap-6">
+          <a
+            href="/watermark"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-stamp text-2xl text-blue-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">Video Watermarking Demo</h3>
+                  <p class="text-gray-300">
+                    Add custom text or logo watermarks to your videos
+                  </p>
+                </div>
+              </div>
+              <span
+                class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm"
+                >Available Now</span
+              >
+            </div>
+          </a>
+
+          <a
+            href="/demos/compression"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i
+                  class="fas fa-compress-arrows-alt text-2xl text-purple-400"
+                ></i>
+                <div>
+                  <h3 class="text-xl font-bold">Batch Compression Demo</h3>
+                  <p class="text-gray-300">
+                    Try our video compression algorithm
+                  </p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+
+          <a
+            href="/demos/converter"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-random text-2xl text-blue-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">Format Converter Demo</h3>
+                  <p class="text-gray-300">
+                    Convert between popular video formats
+                  </p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Audio Processing -->
+      <div class="mb-16">
+        <h2
+          class="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+        >
+          Audio Processing
+        </h2>
+        <div class="grid gap-6">
+          <a
+            href="/demos/podcast"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-microphone text-2xl text-purple-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">
+                    Podcast Audio Processor Demo
+                  </h3>
+                  <p class="text-gray-300">
+                    Clean and enhance your podcast audio
+                  </p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+
+          <a
+            href="/demos/visualizer"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-wave-square text-2xl text-blue-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">Audio Visualizer Demo</h3>
+                  <p class="text-gray-300">
+                    Create dynamic audio visualizations
+                  </p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+
+          <a
+            href="/demos/tts"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-comment text-2xl text-purple-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">Text-to-Speech Video Demo</h3>
+                  <p class="text-gray-300">
+                    Convert text to video with voiceover
+                  </p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Video Editing -->
+      <div class="mb-16">
+        <h2
+          class="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+        >
+          Video Editing Tools
+        </h2>
+        <div class="grid gap-6">
+          <a
+            href="/demos/highlights"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-film text-2xl text-blue-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">Highlight Reel Creator Demo</h3>
+                  <p class="text-gray-300">
+                    Generate video highlight compilations
+                  </p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+
+          <a
+            href="/demos/timelapse"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-clock text-2xl text-purple-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">Timelapse Generator Demo</h3>
+                  <p class="text-gray-300">Create stunning timelapse videos</p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+
+          <a
+            href="/demos/subtitles"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-closed-captioning text-2xl text-blue-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">Subtitle Injector Demo</h3>
+                  <p class="text-gray-300">Burn subtitles into your videos</p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Streaming -->
+      <div class="mb-16">
+        <h2
+          class="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+        >
+          Streaming Solutions
+        </h2>
+        <div class="grid gap-6">
+          <a
+            href="/demos/streaming"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-broadcast-tower text-2xl text-purple-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">
+                    Custom Streaming Server Demo
+                  </h3>
+                  <p class="text-gray-300">Try our RTMP streaming solution</p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+
+          <a
+            href="/demos/webcam"
+            class="block bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <i class="fas fa-camera text-2xl text-blue-400"></i>
+                <div>
+                  <h3 class="text-xl font-bold">Live Webcam Effects Demo</h3>
+                  <p class="text-gray-300">Test real-time webcam filters</p>
+                </div>
+              </div>
+              <span
+                class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm"
+                >Coming Soon</span
+              >
+            </div>
+          </a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

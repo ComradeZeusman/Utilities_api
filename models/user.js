@@ -25,6 +25,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    Demo_try_count: {
+      type: Number,
+      default: 0,
+    },
+    Demo_reset_count: {
+      type: Number,
+      default: 0,
+    },
     apiKeys: {
       test: {
         key: {

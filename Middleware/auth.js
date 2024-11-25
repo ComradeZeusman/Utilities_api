@@ -26,7 +26,7 @@ export const isAuth = async (req, res, next) => {
         });
       }
       // Redirect browser requests to login
-      return res.redirect("/login");
+      return res.redirect("/sigin");
     }
 
     // Verify token
@@ -41,7 +41,7 @@ export const isAuth = async (req, res, next) => {
           error: "User no longer exists",
         });
       }
-      return res.redirect("/login");
+      return res.redirect("/signin");
     }
 
     // Add user to request object

@@ -34,6 +34,15 @@ app.use("/uploads", express.static("uploads"));
 await connectDB();
 await sessionManagement(app);
 
+// Add this before your routes
+app.use((err, req, res, next) => {
+  console.error("Global error:", err);
+  res.status(500).json({
+    error: "Server error",
+    details: err.message,
+  });
+});
+
 // Routes
 app.use("/", router);
 

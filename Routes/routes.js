@@ -44,78 +44,187 @@ function sanitizePath(filePath) {
   return filePath.replace(/[^a-zA-Z0-9-_/.]/g, "_").replace(/\s+/g, "_");
 }
 
-router.post("/watermark", upload.single("video"), async (req, res) => {
-  let inputPath = null;
-  let outputPath = null;
+// Custom middleware to check for API key
+const checkApiKey = async (req, res, next) => {
+  const apiKey = req.headers["x-api-key"];
+  if (apiKey) {
+    const user = await User.findOne({
+      $or: [
+        { "apiKeys.test.key": apiKey },
+        { "apiKeys.production.key": apiKey },
+      ],
+    });
 
-  try {
-    const { text = "Watermark" } = req.body;
-    if (!req.file) {
-      return res.status(400).json({ error: "No video file provided" });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid API key" });
     }
 
-    inputPath = path.resolve(req.file.path).replace(/\\/g, "/");
-    const tempDir = path.resolve("temp");
-    await fs.promises.mkdir(tempDir, { recursive: true });
-
-    const sanitizedFileName = `watermarked_${Date.now()}_${path.basename(
-      req.file.originalname
-    )}`.replace(/[^a-zA-Z0-9-_.]/g, "_");
-    outputPath = path.join(tempDir, sanitizedFileName).replace(/\\/g, "/");
-
-    await new Promise((resolve, reject) => {
-      ffmpeg(inputPath)
-        .videoFilters({
-          filter: "drawtext",
-          options: {
-            text: text,
-            fontsize: "(h/20)", // Dynamic font size based on video height
-            fontcolor: "white",
-            x: "(w/50)", // 2% from left edge
-            y: "h-th-h/50", // Bottom with 2% padding
-            shadowcolor: "black",
-            shadowx: 2,
-            shadowy: 2,
-            box: 1,
-            boxcolor: "black@0.5",
-            boxborderw: 5,
-            font: "Arial",
-          },
-        })
-        .outputOptions([
-          "-vcodec libx264",
-          "-acodec copy",
-          "-preset ultrafast",
-          "-crf 23", // Maintain good quality
-          "-movflags +faststart",
-        ])
-        .on("start", (cmdline) => {
-          console.log("Started ffmpeg with command:", cmdline);
-        })
-        .on("progress", (progress) => {
-          console.log(`Processing: ${progress.percent}% done`);
-        })
-        .on("error", (err) => {
-          console.error("FFmpeg error:", err);
-          reject(err);
-        })
-        .on("end", () => resolve())
-        .save(outputPath);
-    });
-
-    return res.download(outputPath, req.file.originalname, (err) => {
-      if (err) console.error("Download error:", err);
-      cleanupFiles(inputPath, outputPath);
-    });
-  } catch (error) {
-    console.error("Processing error:", error);
-    await cleanupFiles(inputPath, outputPath);
-    return res.status(500).json({
-      error: "Error processing video",
-      details: error.message,
-    });
+    req.user = user;
+    req.apiKey = apiKey;
+    return next();
   }
-});
+
+  return next();
+};
+
+router.post(
+  "/watermark",
+  upload.single("video"),
+  checkApiKey,
+  async (req, res) => {
+    let inputPath = null;
+    let outputPath = null;
+
+    try {
+      const { text = "Watermark" } = req.body;
+      const apiKey = req.apiKey;
+      const user = req.user;
+
+      if (!req.file) {
+        return res.status(400).json({ error: "No video file provided" });
+      }
+
+      // Handle usage limits
+      if (!apiKey) {
+        user.Demo_try_count += 1;
+        if (user.Demo_try_count >= 5) {
+          return res.status(403).json({ error: "Demo limit reached" });
+        }
+        await user.save();
+      } else {
+        if (user.apiKeys.test.key === apiKey) {
+          user.Demo_try_count += 1;
+          if (user.Demo_try_count >= 5) {
+            return res
+              .status(403)
+              .json({ error: "Test key demo limit reached" });
+          }
+          await user.save();
+        } else if (user.apiKeys.production.key === apiKey) {
+          if (user.plan === "basic" && user.usage.requestCount >= 100) {
+            return res
+              .status(403)
+              .json({ error: "Monthly limit reached for basic plan" });
+          } else if (user.plan === "pro" && user.usage.requestCount >= 300) {
+            return res
+              .status(403)
+              .json({ error: "Monthly limit reached for pro plan" });
+          }
+          user.usage.requestCount += 1;
+          user.usage.lastRequest = new Date();
+          await user.save();
+        }
+      }
+
+      // Setup paths
+      inputPath = path.resolve(req.file.path).replace(/\\/g, "/");
+      const tempDir = path.resolve("temp");
+      await fs.promises.mkdir(tempDir, { recursive: true });
+
+      const sanitizedFileName = `watermarked_${Date.now()}_${path.basename(
+        req.file.originalname
+      )}`.replace(/[^a-zA-Z0-9-_.]/g, "_");
+      outputPath = path.join(tempDir, sanitizedFileName).replace(/\\/g, "/");
+
+      // Process video
+      await new Promise((resolve, reject) => {
+        ffmpeg(inputPath)
+          .videoFilters({
+            filter: "drawtext",
+            options: {
+              text: text,
+              fontsize: "(h/20)",
+              fontcolor: "white",
+              x: "(w/50)",
+              y: "h-th-h/50",
+              shadowcolor: "black",
+              shadowx: 2,
+              shadowy: 2,
+              box: 1,
+              boxcolor: "black@0.5",
+              boxborderw: 5,
+              font: "Arial",
+            },
+          })
+          .outputOptions([
+            "-vcodec libx264",
+            "-acodec copy",
+            "-preset ultrafast",
+            "-crf 23",
+            "-movflags +faststart",
+          ])
+          .on("start", (cmdline) =>
+            console.log("Started ffmpeg with command:", cmdline)
+          )
+          .on("progress", (progress) =>
+            console.log(`Processing: ${progress.percent}% done`)
+          )
+          .on("error", (err) => {
+            console.error("FFmpeg error:", err);
+            reject(err);
+          })
+          .on("end", () => {
+            console.log("FFmpeg processing finished");
+            resolve();
+          })
+          .save(outputPath);
+      });
+
+      // Stream the file based on request type
+      if (apiKey) {
+        const stat = await fs.promises.stat(outputPath);
+        res.writeHead(200, {
+          "Content-Type": "video/mp4",
+          "Content-Length": stat.size,
+          "Content-Disposition": "inline",
+          "Cache-Control": "no-cache",
+          "Accept-Ranges": "bytes",
+        });
+
+        const readStream = fs.createReadStream(outputPath);
+
+        // Handle stream errors
+        readStream.on("error", (err) => {
+          console.error("Stream error:", err);
+          if (!res.headersSent) {
+            res.status(500).json({ error: "Streaming error" });
+          }
+        });
+
+        // Pipe with error handling
+        readStream.pipe(res).on("error", (err) => {
+          console.error("Pipe error:", err);
+        });
+
+        // Cleanup after complete
+        res.on("finish", () => {
+          cleanupFiles(inputPath, outputPath)
+            .then(() => console.log("Cleanup completed"))
+            .catch((err) => console.error("Cleanup error:", err));
+        });
+      } else {
+        // Browser download
+        return res.download(outputPath, req.file.originalname, (err) => {
+          if (err) {
+            console.error("Download error:", err);
+          } else {
+            console.log("Download started successfully");
+          }
+          cleanupFiles(inputPath, outputPath)
+            .then(() => console.log("Cleanup completed"))
+            .catch((err) => console.error("Cleanup error:", err));
+        });
+      }
+    } catch (error) {
+      console.error("Processing error:", error);
+      await cleanupFiles(inputPath, outputPath);
+      return res.status(500).json({
+        error: "Error processing video",
+        details: error.message,
+      });
+    }
+  }
+);
 
 router.get("/dashboard", isAuth, (req, res) => {
   res.render("dashboard", { user: req.user });
@@ -253,4 +362,9 @@ router.post("/login", (req, res, next) => {
     }
   })(req, res, next);
 });
+
+router.get("/try", isAuth, (req, res) => {
+  res.render("try");
+});
+
 export default router;
